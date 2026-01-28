@@ -24,11 +24,11 @@ class Quest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.title} ({self.status})"
 
     @property
-    def is_expired(self):
+    def is_expired(self) -> bool:
         if self.status == "active" and self.end_time and timezone.now() > self.end_time:
             return True
         return False
@@ -41,5 +41,5 @@ class Achievement(models.Model):
     icon_key = models.CharField(max_length=50, default="star")
     awarded_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Achievement: {self.name} for {self.user.username}"

@@ -1,25 +1,28 @@
+from typing import Any
 from rest_framework import viewsets, status, decorators
 from rest_framework.response import Response
 from django.utils import timezone
+from django.db.models.query import QuerySet
 from .models import Quest, Achievement
 from .serializers import QuestSerializer, AchievementSerializer
 
 
 class QuestViewSet(viewsets.ModelViewSet):
     serializer_class = QuestSerializer
+    DEFAULT_DURATION_MINUTES = 60
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Quest]:
         # Каждый пользователь видит только свои квесты
         return Quest.objects.filter(user=self.request.user)
 
     @decorators.action(detail=True, methods=["post"])
-    def start(self, request, pk=None):
+    def start(self, request: Any, pk: Any = None) -> Response:
         quest = self.get_object()
         if quest.status != "created":
             return Response({"error": "Quest is already started or finished"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Устанавливаем статус и время (например, на 24 часа, если не передано иное)
-        duration_minutes = request.data.get("duration_minutes", 60)  # По умолчанию 1 час
+        duration_minutes = request.data.get("duration_minutes", self.DEFAULT_DURATION_MINUTES)
         quest.status = "active"
         quest.start_time = timezone.now()
         quest.end_time = quest.start_time + timezone.timedelta(minutes=int(duration_minutes))
@@ -28,7 +31,7 @@ class QuestViewSet(viewsets.ModelViewSet):
         return Response(QuestSerializer(quest).data)
 
     @decorators.action(detail=True, methods=["post"])
-    def complete(self, request, pk=None):
+    def complete(self, request: Any, pk: Any = None) -> Response:
         quest = self.get_object()
 
         # Проверяем "лениво", не истек ли квест прямо сейчас
@@ -49,7 +52,7 @@ class QuestViewSet(viewsets.ModelViewSet):
         return Response(QuestSerializer(quest).data)
 
     @decorators.action(detail=True, methods=["post"])
-    def restart(self, request, pk=None):
+    def restart(self, request: Any, pk: Any = None) -> Response:
         quest = self.get_object()
         if quest.status != "failed":
             return Response({"error": "Only failed quests can be restarted"}, status=status.HTTP_400_BAD_REQUEST)
@@ -65,5 +68,5 @@ class QuestViewSet(viewsets.ModelViewSet):
 class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AchievementSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Achievement]:
         return Achievement.objects.filter(user=self.request.user)

@@ -1,3 +1,4 @@
+from typing import Any
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Quest, Achievement
@@ -35,7 +36,7 @@ class QuestSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["status", "start_time", "end_time", "created_at"]
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Quest:
         # Автоматически привязываем квест к текущему пользователю
         validated_data["user"] = self.context["request"].user
         return super().create(validated_data)
