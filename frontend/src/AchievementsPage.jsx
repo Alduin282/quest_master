@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api from './api';
 import { Award, Trophy, Star, Shield, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AchievementCard = ({ achievement }) => {
+const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const iconSize = 48;
 
     return (
         <motion.div
+            ref={ref}
             layout
             initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="glass-card flex items-center gap-8 p-6 border-l-4 border-l-accent-blue transition-all duration-300"
+            animate={{
+                opacity: 1,
+                scale: 1,
+                borderColor: isHighlighted ? 'var(--accent-blue)' : 'var(--glass-border)',
+                backgroundColor: isHighlighted ? 'rgba(0, 122, 204, 0.1)' : 'var(--glass-bg)'
+            }}
+            transition={{ duration: 0.5 }}
+            className={`glass-card flex items-center gap-8 p-6 border-l-4 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-accent-blue/30 shadow-[0_0_20px_rgba(0,122,204,0.3)]' : 'border-l-accent-blue'}`}
         >
             <div className="bg-bg-tertiary p-5 rounded-sm border border-glass-border shrink-0 flex items-center justify-center">
                 <Award size={iconSize} className="text-accent-blue" />
@@ -74,16 +82,29 @@ const AchievementCard = ({ achievement }) => {
             </div>
         </motion.div>
     );
-};
+});
 
 const AchievementsPage = () => {
     const [achievements, setAchievements] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchParams] = useSearchParams();
+    const highlightQuestId = searchParams.get('quest_id');
+    const cardRefs = useRef({});
 
     const fetchAchievements = async () => {
         try {
             const res = await api.get('achievements/');
             setAchievements(res.data);
+
+            // Allow some time for rendering before scrolling
+            if (highlightQuestId) {
+                setTimeout(() => {
+                    const targetCard = cardRefs.current[highlightQuestId];
+                    if (targetCard) {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            }
         } catch (err) {
             console.error('Failed to fetch achievements');
         } finally {
@@ -116,7 +137,12 @@ const AchievementsPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <AnimatePresence>
                         {achievements.map(achievement => (
-                            <AchievementCard key={achievement.id} achievement={achievement} />
+                            <AchievementCard
+                                key={achievement.id}
+                                ref={el => cardRefs.current[achievement.quest] = el}
+                                achievement={achievement}
+                                isHighlighted={String(achievement.quest) === highlightQuestId}
+                            />
                         ))}
                     </AnimatePresence>
                 </div>
