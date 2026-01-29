@@ -4,14 +4,8 @@ import { AuthProvider, useAuth } from './AuthContext';
 import Layout from './Layout';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
-
-// Placeholder Dashboard
-const Dashboard = () => (
-  <div className="animate-fade py-12">
-    <h2 className="text-4xl font-bold mb-4">Dashboard coming soon...</h2>
-    <p className="text-muted">You are logged in as {useAuth().user?.username}!</p>
-  </div>
-);
+import Dashboard from './Dashboard';
+import AchievementsPage from './AchievementsPage';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -32,6 +26,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/achievements"
+              element={
+                <PrivateRoute>
+                  <AchievementsPage />
                 </PrivateRoute>
               }
             />
