@@ -50,7 +50,12 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 </button>
             </div>
 
-            <h3 className="text-lg font-bold text-text-bright mb-2 line-clamp-1">{quest.title}</h3>
+            <h3
+                className="text-lg font-bold text-text-bright mb-2 truncate"
+                title={quest.title}
+            >
+                {quest.title}
+            </h3>
 
             <div className="mb-6 flex-1">
                 <p className={`text-sm text-text-muted transition-all duration-300 ${!isExpanded ? 'line-clamp-3' : ''}`}>
@@ -242,12 +247,16 @@ const Dashboard = () => {
                         <form onSubmit={handleCreate} className="glass-card p-10 border-accent-blue/30 max-w-2xl mx-auto">
                             <div className="space-y-8 mb-10">
                                 <div className="space-y-3">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Mission Title</label>
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Mission Title</label>
+                                        <span className="text-[10px] text-text-muted">{newQuest.title.length}/255</span>
+                                    </div>
                                     <input
                                         value={newQuest.title}
                                         onChange={(e) => setNewQuest({ ...newQuest, title: e.target.value })}
                                         placeholder="E.g. Daily Workout"
                                         className="text-lg py-3"
+                                        maxLength={255}
                                         required
                                     />
                                 </div>
@@ -264,11 +273,15 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Codename for Future Reward</label>
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Codename for Future Reward</label>
+                                        <span className="text-[10px] text-text-muted">{newQuest.planned_achievement_name.length}/255</span>
+                                    </div>
                                     <input
                                         value={newQuest.planned_achievement_name}
                                         onChange={(e) => setNewQuest({ ...newQuest, planned_achievement_name: e.target.value })}
                                         placeholder="E.g. Master of Cardio"
+                                        maxLength={255}
                                         required
                                     />
                                 </div>
