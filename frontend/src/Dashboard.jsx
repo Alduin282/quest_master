@@ -21,11 +21,20 @@ const StatusBadge = ({ status }) => {
 
 const QuestCard = ({ quest, onAction, onDelete }) => {
     const [isStarting, setIsStarting] = useState(false);
-    const [duration, setDuration] = useState(60);
     const [isExpanded, setIsExpanded] = useState(false);
 
+    // Duration components
+    const [days, setDays] = useState(0);
+    const [hours, setHours] = useState(1);
+    const [minutes, setMinutes] = useState(0);
+
     const handleStartConfirm = () => {
-        onAction(quest.id, 'start', { duration_minutes: duration });
+        const totalMinutes = (parseInt(days) * 24 * 60) + (parseInt(hours) * 60) + (parseInt(minutes) || 0);
+        if (totalMinutes < 1) {
+            alert("Mission must be at least 1 minute long.");
+            return;
+        }
+        onAction(quest.id, 'start', { duration_minutes: totalMinutes });
         setIsStarting(false);
     };
 
@@ -92,26 +101,53 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
-                                className="space-y-3 bg-accent-blue/5 p-3 rounded border border-accent-blue/20 mb-2"
+                                className="space-y-4 bg-accent-blue/5 p-4 rounded border border-accent-blue/20 mb-2"
                             >
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue">Set Mission Duration (Min)</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="number"
-                                        value={duration}
-                                        onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
-                                        className="w-full bg-[#3c3c3c] border-none text-sm py-1 px-2"
-                                        min="1"
-                                    />
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue block mb-1">Mission Duration</label>
+
+                                <div className="grid grid-cols-3 gap-2">
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] text-text-muted uppercase">Days</label>
+                                        <input
+                                            type="number"
+                                            value={days}
+                                            onChange={(e) => setDays(Math.max(0, parseInt(e.target.value) || 0))}
+                                            className="w-full bg-[#3c3c3c] border-none text-xs py-1.5 px-2"
+                                            min="0"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] text-text-muted uppercase">Hours</label>
+                                        <input
+                                            type="number"
+                                            value={hours}
+                                            onChange={(e) => setHours(Math.max(0, parseInt(e.target.value) || 0))}
+                                            className="w-full bg-[#3c3c3c] border-none text-xs py-1.5 px-2"
+                                            min="0"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] text-text-muted uppercase">Min</label>
+                                        <input
+                                            type="number"
+                                            value={minutes}
+                                            onChange={(e) => setMinutes(Math.max(0, parseInt(e.target.value) || 0))}
+                                            className="w-full bg-[#3c3c3c] border-none text-xs py-1.5 px-2"
+                                            min="0"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-2 pt-1">
                                     <button
                                         onClick={handleStartConfirm}
-                                        className="btn btn-primary text-xs py-1 px-4"
+                                        className="btn btn-primary text-xs py-1.5 px-4 flex-1"
                                     >Confirm</button>
+                                    <button
+                                        onClick={() => setIsStarting(false)}
+                                        className="btn btn-ghost text-xs py-1.5 px-4 bg-white/5 opacity-60 hover:opacity-100"
+                                    >Cancel</button>
                                 </div>
-                                <button
-                                    onClick={() => setIsStarting(false)}
-                                    className="text-[10px] text-text-muted hover:text-white block w-full text-center"
-                                >Cancel</button>
                             </motion.div>
                         ) : (
                             <button
