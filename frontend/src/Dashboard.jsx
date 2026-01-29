@@ -69,7 +69,12 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
             {quest.status === 'active' && quest.end_time && (
                 <div className="flex items-center gap-2 text-accent-orange mb-6 text-xs font-mono bg-accent-orange/5 p-2 rounded">
                     <Clock size={14} />
-                    <span>Ends: {new Date(quest.end_time).toLocaleTimeString()}</span>
+                    <span>Due: {new Date(quest.end_time).toLocaleString([], {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</span>
                 </div>
             )}
 
@@ -138,10 +143,26 @@ const Dashboard = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [newQuest, setNewQuest] = useState({ title: '', description: '', planned_achievement_name: '' });
 
+    const sortQuests = (questList) => {
+        const priority = {
+            'active': 1,
+            'created': 2,
+            'failed': 3,
+            'completed': 4
+        };
+
+        return [...questList].sort((a, b) => {
+            if (priority[a.status] !== priority[b.status]) {
+                return priority[a.status] - priority[b.status];
+            }
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+    };
+
     const fetchQuests = async () => {
         try {
             const res = await api.get('quests/');
-            setQuests(res.data);
+            setQuests(sortQuests(res.data));
         } catch (err) {
             console.error('Failed to fetch quests');
         } finally {
@@ -157,7 +178,7 @@ const Dashboard = () => {
         e.preventDefault();
         try {
             const res = await api.post('quests/', newQuest);
-            setQuests([res.data, ...quests]);
+            setQuests(sortQuests([res.data, ...quests]));
             setNewQuest({ title: '', description: '', planned_achievement_name: '' });
             setShowAddForm(false);
         } catch (err) {
