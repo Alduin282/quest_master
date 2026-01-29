@@ -46,8 +46,17 @@ class QuestViewSet(viewsets.ModelViewSet):
         quest.status = "completed"
         quest.save()
 
-        # Создаем ачивку
-        Achievement.objects.create(user=request.user, quest=quest, name=quest.planned_achievement_name)
+        # Маппинг сложности квеста в редкость ачивки
+        difficulty_to_rarity = {
+            "easy": "bronze",
+            "medium": "silver",
+            "hard": "gold",
+            "insane": "diamond",
+        }
+        rarity = difficulty_to_rarity.get(quest.difficulty, "silver")
+
+        # Создаем ачивку с учетом редкости
+        Achievement.objects.create(user=request.user, quest=quest, name=quest.planned_achievement_name, rarity=rarity)
 
         return Response(QuestSerializer(quest).data)
 

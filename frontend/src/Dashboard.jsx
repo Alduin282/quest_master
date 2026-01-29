@@ -60,6 +60,13 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 </button>
             </div>
 
+            <div className="flex gap-2 mb-2">
+                {quest.difficulty === 'easy' && <span className="text-[10px] font-bold text-accent-green uppercase tracking-widest bg-accent-green/10 px-2 py-0.5 rounded border border-accent-green/20">🌱 Easy</span>}
+                {quest.difficulty === 'medium' && <span className="text-[10px] font-bold text-accent-blue uppercase tracking-widest bg-accent-blue/10 px-2 py-0.5 rounded border border-accent-blue/20">⚔️ Medium</span>}
+                {quest.difficulty === 'hard' && <span className="text-[10px] font-bold text-accent-orange uppercase tracking-widest bg-accent-orange/10 px-2 py-0.5 rounded border border-accent-orange/20">🔥 Hard</span>}
+                {quest.difficulty === 'insane' && <span className="text-[10px] font-bold text-accent-red uppercase tracking-widest bg-accent-red/10 px-2 py-0.5 rounded border border-accent-red/20 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse">💀 Insane</span>}
+            </div>
+
             <h3
                 className="text-lg font-bold text-text-bright mb-2 truncate"
                 title={quest.title}
@@ -192,7 +199,7 @@ const Dashboard = () => {
     const [quests, setQuests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showAddForm, setShowAddForm] = useState(false);
-    const [newQuest, setNewQuest] = useState({ title: '', description: '', planned_achievement_name: '' });
+    const [newQuest, setNewQuest] = useState({ title: '', description: '', planned_achievement_name: '', difficulty: 'medium' });
 
     const sortQuests = (questList) => {
         const priority = {
@@ -230,7 +237,7 @@ const Dashboard = () => {
         try {
             const res = await api.post('quests/', newQuest);
             setQuests(sortQuests([res.data, ...quests]));
-            setNewQuest({ title: '', description: '', planned_achievement_name: '' });
+            setNewQuest({ title: '', description: '', planned_achievement_name: '', difficulty: 'medium' });
             setShowAddForm(false);
         } catch (err) {
             alert('Error creating quest. Make sure all fields are filled.');
@@ -319,6 +326,20 @@ const Dashboard = () => {
                                         className="w-full min-h-[120px] bg-[#3c3c3c] border border-transparent focus:border-accent-blue p-4 text-text-main outline-none resize-y"
                                         rows={4}
                                     />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Difficulty Level</label>
+                                    <select
+                                        value={newQuest.difficulty}
+                                        onChange={(e) => setNewQuest({ ...newQuest, difficulty: e.target.value })}
+                                        className="w-full bg-[#3c3c3c] border border-transparent focus:border-accent-blue p-3 text-text-main outline-none cursor-pointer"
+                                    >
+                                        <option value="easy" className="bg-[#2d2d2d] text-[#4ec9b0]">🌱 Easy (Bronze Reward)</option>
+                                        <option value="medium" className="bg-[#2d2d2d] text-[#4fc1ff]">⚔️ Medium (Silver Reward)</option>
+                                        <option value="hard" className="bg-[#2d2d2d] text-[#ce9178]">🔥 Hard (Gold Reward)</option>
+                                        <option value="insane" className="bg-[#2d2d2d] text-[#f44747]">💀 Insane (Diamond Reward)</option>
+                                    </select>
                                 </div>
 
                                 <div className="space-y-3">

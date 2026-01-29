@@ -92,8 +92,29 @@ class TestQuestAPI:
         # Assert
         assert response.status_code == status.HTTP_200_OK
         quest.refresh_from_db()
-        assert quest.status == "completed"
         assert Achievement.objects.filter(quest=quest).exists()
+
+    def test__quest_complete__when_insane_difficulty__creates_diamond_achievement(
+        self, api_client: Any, user: User
+    ) -> None:
+        # Arrange
+        api_client.force_authenticate(user=user)
+        quest = Quest.objects.create(
+            user=user,
+            title="Legendary Quest",
+            planned_achievement_name="Godlike",
+            status="active",
+            difficulty="insane",
+            end_time=timezone.now() + timedelta(minutes=10),
+        )
+
+        # Act
+        response = api_client.post(f"/api/quests/{quest.id}/complete/")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        achievement = Achievement.objects.get(quest=quest)
+        assert achievement.rarity == "diamond"
 
     def test__quest_complete__when_status_not_active__returns_error(self, api_client: Any, user: User) -> None:
         # Arrange

@@ -10,11 +10,18 @@ class Quest(models.Model):
         ("completed", "Completed"),
         ("failed", "Failed"),
     ]
+    DIFFICULTY_CHOICES = [
+        ("easy", "Easy"),
+        ("medium", "Medium"),
+        ("hard", "Hard"),
+        ("insane", "Insane"),
+    ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quests")
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     planned_achievement_name = models.CharField(max_length=255)
+    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default="medium")
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="created")
 
@@ -40,10 +47,18 @@ class Quest(models.Model):
 
 
 class Achievement(models.Model):
+    RARITY_CHOICES = [
+        ("bronze", "Bronze"),
+        ("silver", "Silver"),
+        ("gold", "Gold"),
+        ("diamond", "Diamond"),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="achievements")
     quest = models.OneToOneField(Quest, on_delete=models.CASCADE, related_name="achievement")
     name = models.CharField(max_length=255)
     icon_key = models.CharField(max_length=50, default="star")
+    rarity = models.CharField(max_length=20, choices=RARITY_CHOICES, default="silver")
     awarded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:

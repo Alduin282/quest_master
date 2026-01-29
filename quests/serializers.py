@@ -16,7 +16,7 @@ class AchievementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Achievement
-        fields = ["id", "name", "icon_key", "awarded_at", "quest", "quest_title", "quest_description"]
+        fields = ["id", "name", "icon_key", "awarded_at", "quest", "quest_title", "quest_description", "rarity"]
 
 
 class QuestSerializer(serializers.ModelSerializer):
@@ -30,6 +30,7 @@ class QuestSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "planned_achievement_name",
+            "difficulty",
             "status",
             "start_time",
             "end_time",
