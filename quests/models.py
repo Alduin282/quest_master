@@ -24,6 +24,11 @@ class Quest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["status", "end_time"]),
+        ]
+
     def __str__(self) -> str:
         return f"{self.title} ({self.status})"
 
