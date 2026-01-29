@@ -8,6 +8,42 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
     const [isExpanded, setIsExpanded] = useState(false);
     const iconSize = 48;
 
+    const rarityStyles = {
+        bronze: {
+            border: 'border-l-[#cd7f32]',
+            bg: 'bg-[#cd7f32]/5',
+            iconColor: 'text-[#cd7f32]',
+            label: '🥉 Bronze',
+            accent: '#cd7f32'
+        },
+        silver: {
+            border: 'border-l-accent-blue',
+            bg: 'bg-accent-blue/5',
+            iconColor: 'text-accent-blue',
+            label: '🥈 Silver',
+            accent: '#007acc'
+        },
+        gold: {
+            border: 'border-l-[#ffd700]',
+            bg: 'bg-[#ffd700]/5',
+            iconColor: 'text-[#ffd700]',
+            label: '🥇 Gold',
+            accent: '#ffd700',
+            glow: 'shadow-[0_0_15px_rgba(255,215,0,0.2)]'
+        },
+        diamond: {
+            border: 'border-l-[#b9f2ff]',
+            bg: 'bg-[#b9f2ff]/5',
+            iconColor: 'text-[#b9f2ff]',
+            label: '💎 Diamond',
+            accent: '#b9f2ff',
+            glow: 'shadow-[0_0_20px_rgba(185,242,255,0.4)]',
+            pulse: 'animate-pulse'
+        }
+    };
+
+    const style = rarityStyles[achievement.rarity] || rarityStyles.silver;
+
     return (
         <motion.div
             ref={ref}
@@ -20,17 +56,17 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
                 backgroundColor: isHighlighted ? 'rgba(0, 122, 204, 0.1)' : 'var(--glass-bg)'
             }}
             transition={{ duration: 0.5 }}
-            className={`glass-card flex items-center gap-8 p-6 border-l-4 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-accent-blue/30 shadow-[0_0_20px_rgba(0,122,204,0.3)]' : 'border-l-accent-blue'}`}
+            className={`glass-card flex items-center gap-8 p-6 border-l-4 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-accent-blue/30 shadow-[0_0_20px_rgba(0,122,204,0.3)]' : style.border} ${style.glow || ''} ${style.pulse || ''}`}
         >
             <div className="bg-bg-tertiary p-5 rounded-sm border border-glass-border shrink-0 flex items-center justify-center">
-                <Award size={iconSize} className="text-accent-blue" />
+                <Award size={iconSize} className={style.iconColor} />
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
                     <h3 className="text-xl font-black text-text-bright mb-1 truncate" title={achievement.name}>
                         {achievement.name}
                     </h3>
-                    <div className="text-[9px] font-mono text-accent-blue uppercase tracking-tighter bg-accent-blue/5 px-1.5 py-0.5 rounded shrink-0">
+                    <div className="text-[9px] font-mono whitespace-nowrap uppercase tracking-tighter bg-white/5 opacity-60 px-1.5 py-0.5 rounded shrink-0">
                         {new Date(achievement.awarded_at).toLocaleString([], {
                             year: 'numeric',
                             month: 'short',
@@ -44,7 +80,8 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
                 <div className="bg-white/5 p-2 rounded border border-white/5 mt-2">
                     <div className="flex items-center justify-between gap-4">
                         <span
-                            className="text-xs font-bold text-accent-blue/80 uppercase tracking-widest truncate"
+                            className={`text-xs font-bold uppercase tracking-widest truncate`}
+                            style={{ color: style.accent }}
                             title={achievement.quest_title}
                         >
                             Quest: {achievement.quest_title}
@@ -75,9 +112,12 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
                     </AnimatePresence>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-widest">
-                    <span className="w-1 h-1 bg-accent-blue rounded-full"></span>
-                    Verified Achievement
+                <div
+                    className="mt-4 flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest opacity-80"
+                    style={{ color: style.accent }}
+                >
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: style.accent }}></span>
+                    {style.label}
                 </div>
             </div>
         </motion.div>
