@@ -4,6 +4,7 @@ import { Award, Trophy, Star, Shield, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AchievementCard = ({ achievement }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const icons = {
         'Quest Started': <Zap className="text-accent-blue" />,
         'First Step': <Star className="text-accent-orange" />,
@@ -13,24 +14,58 @@ const AchievementCard = ({ achievement }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card flex items-center gap-6 p-6 border-l-4 border-l-accent-blue"
+            className="glass-card flex items-start gap-6 p-6 border-l-4 border-l-accent-blue transition-all duration-300"
         >
-            <div className="bg-bg-tertiary p-4 rounded-full border border-glass-border">
+            <div className="bg-bg-tertiary p-4 rounded-sm border border-glass-border shrink-0">
                 {icons[achievement.name] || <Award size={32} className="text-accent-blue" />}
             </div>
-            <div>
-                <h3 className="text-xl font-black text-text-bright mb-1">{achievement.name}</h3>
-                <p className="text-sm text-text-muted">{achievement.description || 'Achievement unlocked through dedication and hard work.'}</p>
-                <div className="mt-3 text-[10px] font-mono text-accent-blue uppercase tracking-widest bg-accent-blue/5 inline-block px-2 py-0.5 rounded">
-                    Awarded: {new Date(achievement.awarded_at).toLocaleString([], {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}
+            <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-black text-text-bright mb-1 truncate" title={achievement.name}>
+                        {achievement.name}
+                    </h3>
+                    <div className="text-[9px] font-mono text-accent-blue uppercase tracking-tighter bg-accent-blue/5 px-1.5 py-0.5 rounded shrink-0">
+                        {new Date(achievement.awarded_at).toLocaleDateString()}
+                    </div>
+                </div>
+
+                <div className="bg-white/5 p-2 rounded border border-white/5 mt-2">
+                    <div className="flex items-center justify-between gap-4">
+                        <span className="text-xs font-bold text-accent-blue/80 uppercase tracking-widest truncate">
+                            Mission: {achievement.quest_title}
+                        </span>
+                        {achievement.quest_description && (
+                            <button
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="text-[10px] text-text-muted hover:text-white cursor-pointer uppercase font-bold"
+                            >
+                                {isExpanded ? 'Hide briefing' : 'Read briefing'}
+                            </button>
+                        )}
+                    </div>
+
+                    <AnimatePresence>
+                        {isExpanded && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden"
+                            >
+                                <p className="text-xs text-text-muted mt-3 italic leading-relaxed pt-2 border-t border-white/5">
+                                    {achievement.quest_description}
+                                </p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                <div className="mt-4 flex items-center gap-2 text-[10px] font-mono text-text-muted uppercase tracking-widest">
+                    <span className="w-1 h-1 bg-accent-blue rounded-full"></span>
+                    Verified Achievement
                 </div>
             </div>
         </motion.div>
