@@ -70,6 +70,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 <div className="flex items-center gap-2 text-accent-orange mb-6 text-xs font-mono bg-accent-orange/5 p-2 rounded">
                     <Clock size={14} />
                     <span>Due: {new Date(quest.end_time).toLocaleString([], {
+                        year: 'numeric',
                         month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
