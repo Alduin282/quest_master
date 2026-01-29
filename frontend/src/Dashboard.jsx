@@ -19,6 +19,14 @@ const StatusBadge = ({ status }) => {
 };
 
 const QuestCard = ({ quest, onAction, onDelete }) => {
+    const [isStarting, setIsStarting] = useState(false);
+    const [duration, setDuration] = useState(60);
+
+    const handleStartConfirm = () => {
+        onAction(quest.id, 'start', { duration_minutes: duration });
+        setIsStarting(false);
+    };
+
     return (
         <motion.div
             layout
@@ -49,14 +57,43 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 </div>
             )}
 
-            <div className="flex gap-2 mt-auto">
+            <div className="flex flex-col gap-2 mt-auto">
                 {quest.status === 'created' && (
-                    <button
-                        onClick={() => onAction(quest.id, 'start')}
-                        className="btn btn-primary flex-1 justify-center gap-2 cursor-pointer"
-                    >
-                        <Play size={14} /> Start
-                    </button>
+                    <>
+                        {isStarting ? (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="space-y-3 bg-accent-blue/5 p-3 rounded border border-accent-blue/20 mb-2"
+                            >
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue">Set Mission Duration (Min)</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        value={duration}
+                                        onChange={(e) => setDuration(parseInt(e.target.value) || 0)}
+                                        className="w-full bg-[#3c3c3c] border-none text-sm py-1 px-2"
+                                        min="1"
+                                    />
+                                    <button
+                                        onClick={handleStartConfirm}
+                                        className="btn btn-primary text-xs py-1 px-4"
+                                    >Confirm</button>
+                                </div>
+                                <button
+                                    onClick={() => setIsStarting(false)}
+                                    className="text-[10px] text-text-muted hover:text-white block w-full text-center"
+                                >Cancel</button>
+                            </motion.div>
+                        ) : (
+                            <button
+                                onClick={() => setIsStarting(true)}
+                                className="btn btn-primary flex-1 justify-center gap-2 cursor-pointer"
+                            >
+                                <Play size={14} /> Start Mission
+                            </button>
+                        )}
+                    </>
                 )}
                 {quest.status === 'active' && (
                     <button
@@ -112,9 +149,9 @@ const Dashboard = () => {
         }
     };
 
-    const handleAction = async (id, action) => {
+    const handleAction = async (id, action, data = {}) => {
         try {
-            await api.post(`quests/${id}/${action}/`);
+            await api.post(`quests/${id}/${action}/`, data);
             fetchQuests();
         } catch (err) {
             alert(`Failed to ${action} quest`);
