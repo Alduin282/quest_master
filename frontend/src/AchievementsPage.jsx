@@ -36,9 +36,7 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
             bg: 'bg-[#b9f2ff]/5',
             iconColor: 'text-[#b9f2ff]',
             label: '💎 Diamond',
-            accent: '#b9f2ff',
-            glow: 'shadow-[0_0_20px_rgba(185,242,255,0.4)]',
-            pulse: 'animate-pulse'
+            accent: '#b9f2ff'
         }
     };
 
