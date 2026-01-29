@@ -21,11 +21,14 @@ const StatusBadge = ({ status }) => {
 const QuestCard = ({ quest, onAction, onDelete }) => {
     const [isStarting, setIsStarting] = useState(false);
     const [duration, setDuration] = useState(60);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleStartConfirm = () => {
         onAction(quest.id, 'start', { duration_minutes: duration });
         setIsStarting(false);
     };
+
+    const isLongDescription = quest.description && quest.description.length > 120;
 
     return (
         <motion.div
@@ -33,7 +36,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="glass-card flex flex-col h-full"
+            className="glass-card flex flex-col h-full transition-all duration-300"
             style={{ padding: '20px' }}
         >
             <div className="flex justify-between items-start mb-4">
@@ -48,7 +51,20 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
             </div>
 
             <h3 className="text-lg font-bold text-text-bright mb-2 line-clamp-1">{quest.title}</h3>
-            <p className="text-sm text-text-muted mb-6 flex-1 line-clamp-3">{quest.description}</p>
+
+            <div className="mb-6 flex-1">
+                <p className={`text-sm text-text-muted transition-all duration-300 ${!isExpanded ? 'line-clamp-3' : ''}`}>
+                    {quest.description}
+                </p>
+                {isLongDescription && (
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-[10px] uppercase tracking-widest text-accent-blue mt-2 hover:text-white font-bold cursor-pointer"
+                    >
+                        {isExpanded ? 'Show less' : 'Read more'}
+                    </button>
+                )}
+            </div>
 
             {quest.status === 'active' && quest.end_time && (
                 <div className="flex items-center gap-2 text-accent-orange mb-6 text-xs font-mono bg-accent-orange/5 p-2 rounded">
