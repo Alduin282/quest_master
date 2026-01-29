@@ -162,27 +162,32 @@ const Dashboard = () => {
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden mb-12"
                     >
-                        <form onSubmit={handleCreate} className="glass-card p-8 border-accent-blue/30">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Mission Title</label>
+                        <form onSubmit={handleCreate} className="glass-card p-10 border-accent-blue/30 max-w-2xl mx-auto">
+                            <div className="space-y-8 mb-10">
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Mission Title</label>
                                     <input
                                         value={newQuest.title}
                                         onChange={(e) => setNewQuest({ ...newQuest, title: e.target.value })}
                                         placeholder="E.g. Daily Workout"
+                                        className="text-lg py-3"
                                         required
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Briefing</label>
-                                    <input
+
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Command Briefing (Description)</label>
+                                    <textarea
                                         value={newQuest.description}
                                         onChange={(e) => setNewQuest({ ...newQuest, description: e.target.value })}
-                                        placeholder="What needs to be done?"
+                                        placeholder="Operation details and objectives..."
+                                        className="w-full min-h-[120px] bg-[#3c3c3c] border border-transparent focus:border-accent-blue p-4 text-text-main outline-none resize-y"
+                                        rows={4}
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Future Reward Name</label>
+
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Codename for Future Reward</label>
                                     <input
                                         value={newQuest.planned_achievement_name}
                                         onChange={(e) => setNewQuest({ ...newQuest, planned_achievement_name: e.target.value })}
@@ -191,8 +196,9 @@ const Dashboard = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end">
-                                <button type="submit" className="btn btn-primary px-10 py-3">
+
+                            <div className="flex justify-end pt-6 border-t border-glass-border">
+                                <button type="submit" className="btn btn-primary px-12 py-4 font-bold text-base uppercase tracking-widest">
                                     Deploy Mission
                                 </button>
                             </div>
