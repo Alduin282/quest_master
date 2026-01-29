@@ -31,7 +31,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
     const handleStartConfirm = () => {
         const totalMinutes = (parseInt(days) * 24 * 60) + (parseInt(hours) * 60) + (parseInt(minutes) || 0);
         if (totalMinutes < 1) {
-            alert("Mission must be at least 1 minute long.");
+            alert("Quest must be at least 1 minute long.");
             return;
         }
         onAction(quest.id, 'start', { duration_minutes: totalMinutes });
@@ -54,7 +54,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 <button
                     onClick={() => onDelete(quest.id)}
                     className="text-text-muted hover:text-accent-red transition-colors p-1 cursor-pointer"
-                    title="Delete Mission"
+                    title="Delete Quest"
                 >
                     <Trash2 size={14} />
                 </button>
@@ -103,7 +103,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                                 animate={{ opacity: 1, height: 'auto' }}
                                 className="space-y-4 bg-accent-blue/5 p-4 rounded border border-accent-blue/20 mb-2"
                             >
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue block mb-1">Mission Duration</label>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue block mb-1">Quest Duration</label>
 
                                 <div className="grid grid-cols-3 gap-2">
                                     <div className="space-y-1">
@@ -154,7 +154,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                                 onClick={() => setIsStarting(true)}
                                 className="btn btn-primary flex-1 justify-center gap-2 cursor-pointer"
                             >
-                                <Play size={14} /> Start Mission
+                                <Play size={14} /> Start Quest
                             </button>
                         )}
                     </>
@@ -180,7 +180,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                         onClick={() => onAction(quest.id, 'restart')}
                         className="btn btn-outline flex-1 justify-center gap-2 border-accent-red/30 text-accent-red hover:bg-accent-red/5 cursor-pointer"
                     >
-                        <RefreshCcw size={14} /> Restart Mission
+                        <RefreshCcw size={14} /> Restart Quest
                     </button>
                 )}
             </div>
@@ -268,7 +268,7 @@ const Dashboard = () => {
                 <div>
                     <h1 className="text-3xl font-black text-white flex items-center gap-3">
                         <Target className="text-accent-blue" size={32} />
-                        Active Missions
+                        Active Quests
                     </h1>
                     <p className="text-text-muted mt-1">Manage your journey and track achievements</p>
                 </div>
@@ -297,7 +297,7 @@ const Dashboard = () => {
                             <div className="space-y-8 mb-10">
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
-                                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Mission Title</label>
+                                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Quest Title</label>
                                         <span className="text-[10px] text-text-muted">{newQuest.title.length}/255</span>
                                     </div>
                                     <input
@@ -311,7 +311,7 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Command Briefing (Description)</label>
+                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Quest Description</label>
                                     <textarea
                                         value={newQuest.description}
                                         onChange={(e) => setNewQuest({ ...newQuest, description: e.target.value })}
@@ -338,7 +338,7 @@ const Dashboard = () => {
 
                             <div className="flex justify-end pt-6 border-t border-glass-border">
                                 <button type="submit" className="btn btn-primary px-12 py-4 font-bold text-base uppercase tracking-widest">
-                                    Deploy Mission
+                                    Deploy Quest
                                 </button>
                             </div>
                         </form>
@@ -348,7 +348,7 @@ const Dashboard = () => {
 
             {quests.length === 0 ? (
                 <div className="center-vh h-64 border-2 border-dashed border-glass-border rounded-lg text-text-muted">
-                    No active missions. Click "New Quest" to begin.
+                    No active quests. Click "New Quest" to begin.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

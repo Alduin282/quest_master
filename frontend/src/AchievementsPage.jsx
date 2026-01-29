@@ -47,14 +47,14 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
                             className="text-xs font-bold text-accent-blue/80 uppercase tracking-widest truncate"
                             title={achievement.quest_title}
                         >
-                            Mission: {achievement.quest_title}
+                            Quest: {achievement.quest_title}
                         </span>
                         {achievement.quest_description && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
                                 className="text-[10px] text-text-muted hover:text-white cursor-pointer uppercase font-bold"
                             >
-                                {isExpanded ? 'Hide briefing' : 'Read briefing'}
+                                {isExpanded ? 'Hide description' : 'Read description'}
                             </button>
                         )}
                     </div>
