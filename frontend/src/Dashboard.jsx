@@ -8,7 +8,8 @@ const StatusBadge = ({ status }) => {
     const styles = {
         created: 'bg-accent-blue/10 text-accent-blue border-accent-blue/20',
         active: 'bg-accent-orange/10 text-accent-orange border-accent-orange/20',
-        completed: 'bg-accent-green/10 text-accent-green border-accent-green/20'
+        completed: 'bg-accent-green/10 text-accent-green border-accent-green/20',
+        failed: 'bg-accent-red/10 text-accent-red border-accent-red/20'
     };
 
     return (
@@ -138,6 +139,14 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                         <Award size={14} /> View Reward
                     </Link>
                 )}
+                {quest.status === 'failed' && (
+                    <button
+                        onClick={() => onAction(quest.id, 'restart')}
+                        className="btn btn-outline flex-1 justify-center gap-2 border-accent-red/30 text-accent-red hover:bg-accent-red/5 cursor-pointer"
+                    >
+                        <RefreshCcw size={14} /> Restart Mission
+                    </button>
+                )}
             </div>
         </motion.div>
     );
@@ -195,9 +204,13 @@ const Dashboard = () => {
     const handleAction = async (id, action, data = {}) => {
         try {
             await api.post(`quests/${id}/${action}/`, data);
-            fetchQuests();
         } catch (err) {
-            alert(`Failed to ${action} quest`);
+            // Even if it failed (e.g. 400 for expired), we refresh to show updated status
+            if (err.response?.data?.error) {
+                console.warn(`Action ${action} resulted in: ${err.response.data.error}`);
+            }
+        } finally {
+            fetchQuests();
         }
     };
 
