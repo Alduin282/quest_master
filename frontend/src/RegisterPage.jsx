@@ -120,18 +120,21 @@ const RegisterPage = () => {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading || success}
-                        className="btn btn-primary w-full justify-center py-4 text-base font-bold uppercase tracking-widest mt-6"
-                    >
-                        {loading ? 'Creating...' : (
-                            <>
-                                <UserPlus size={20} />
-                                Create Account
-                            </>
-                        )}
-                    </button>
+
+                    <div className="form-actions">
+                        <button
+                            type="submit"
+                            disabled={loading || success}
+                            className="btn btn-primary px-8 py-4 text-base font-bold uppercase tracking-widest"
+                        >
+                            {loading ? 'Creating...' : (
+                                <>
+                                    <UserPlus size={20} />
+                                    Create Account
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </form>
 
                 <div className="mt-10 text-center text-sm border-t border-glass-border pt-6">

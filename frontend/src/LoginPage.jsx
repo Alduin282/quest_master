@@ -69,18 +69,20 @@ const LoginPage = () => {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="btn btn-primary w-full justify-center py-4 text-base font-bold uppercase tracking-widest mt-4"
-                    >
-                        {loading ? 'Authenticating...' : (
-                            <>
-                                <LogIn size={20} />
-                                Sign In
-                            </>
-                        )}
-                    </button>
+                    <div className="form-actions">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="btn btn-primary px-8 py-4 text-base font-bold uppercase tracking-widest"
+                        >
+                            {loading ? 'Authenticating...' : (
+                                <>
+                                    <LogIn size={20} />
+                                    Sign In
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </form>
 
                 <div className="mt-10 text-center text-sm border-t border-glass-border pt-6">

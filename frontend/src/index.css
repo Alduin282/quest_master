@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   /* VS Code Dark+ inspired palette */
   --bg-primary: #1e1e1e;
@@ -63,6 +65,8 @@ h4 {
   border-radius: 4px;
   /* More blocky VS Code style */
   box-shadow: var(--glass-shadow);
+  padding: 32px;
+  /* Add internal padding to separate content from borders */
 }
 
 .btn {
@@ -155,6 +159,14 @@ input:focus {
   align-items: center;
   justify-content: center;
   flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  /* Safe vanilla margin */
 }
 
 nav.header-nav {
