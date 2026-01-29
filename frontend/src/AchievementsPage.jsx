@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const AchievementCard = ({ achievement }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const iconSize = 48;
     const icons = {
-        'Quest Started': <Zap className="text-accent-blue" />,
-        'First Step': <Star className="text-accent-orange" />,
-        'Quest Master': <Trophy className="text-accent-purple" />,
-        'Legendary Status': <Shield className="text-accent-red" />
+        'Quest Started': <Zap size={iconSize} className="text-accent-blue" />,
+        'First Step': <Star size={iconSize} className="text-accent-orange" />,
+        'Quest Master': <Trophy size={iconSize} className="text-accent-purple" />,
+        'Legendary Status': <Shield size={iconSize} className="text-accent-red" />
     };
 
     return (
@@ -17,10 +18,10 @@ const AchievementCard = ({ achievement }) => {
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card flex items-start gap-6 p-6 border-l-4 border-l-accent-blue transition-all duration-300"
+            className="glass-card flex items-center gap-8 p-6 border-l-4 border-l-accent-blue transition-all duration-300"
         >
-            <div className="bg-bg-tertiary p-4 rounded-sm border border-glass-border shrink-0">
-                {icons[achievement.name] || <Award size={32} className="text-accent-blue" />}
+            <div className="bg-bg-tertiary p-5 rounded-sm border border-glass-border shrink-0 flex items-center justify-center">
+                {icons[achievement.name] || <Award size={iconSize} className="text-accent-blue" />}
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
@@ -28,7 +29,13 @@ const AchievementCard = ({ achievement }) => {
                         {achievement.name}
                     </h3>
                     <div className="text-[9px] font-mono text-accent-blue uppercase tracking-tighter bg-accent-blue/5 px-1.5 py-0.5 rounded shrink-0">
-                        {new Date(achievement.awarded_at).toLocaleDateString()}
+                        {new Date(achievement.awarded_at).toLocaleString([], {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}
                     </div>
                 </div>
 
