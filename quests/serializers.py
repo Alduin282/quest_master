@@ -11,9 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AchievementSerializer(serializers.ModelSerializer):
+    quest_title = serializers.CharField(source="quest.title", read_only=True)
+    quest_description = serializers.CharField(source="quest.description", read_only=True)
+
     class Meta:
         model = Achievement
-        fields = ["id", "name", "icon_key", "awarded_at", "quest"]
+        fields = ["id", "name", "icon_key", "awarded_at", "quest", "quest_title", "quest_description"]
 
 
 class QuestSerializer(serializers.ModelSerializer):

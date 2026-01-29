@@ -24,7 +24,13 @@ const AchievementCard = ({ achievement }) => {
                 <h3 className="text-xl font-black text-text-bright mb-1">{achievement.name}</h3>
                 <p className="text-sm text-text-muted">{achievement.description || 'Achievement unlocked through dedication and hard work.'}</p>
                 <div className="mt-3 text-[10px] font-mono text-accent-blue uppercase tracking-widest bg-accent-blue/5 inline-block px-2 py-0.5 rounded">
-                    Earned: {new Date(achievement.earned_at).toLocaleDateString()}
+                    Awarded: {new Date(achievement.awarded_at).toLocaleString([], {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}
                 </div>
             </div>
         </motion.div>
