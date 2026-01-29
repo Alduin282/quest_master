@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from './api';
-import { Plus, Play, CheckCircle, RefreshCcw, Clock, Target, Trash2 } from 'lucide-react';
+import { Plus, Play, CheckCircle, RefreshCcw, Clock, Target, Trash2, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const StatusBadge = ({ status }) => {
@@ -31,7 +32,8 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 <StatusBadge status={quest.status} />
                 <button
                     onClick={() => onDelete(quest.id)}
-                    className="text-text-muted hover:text-accent-red transition-colors p-1"
+                    className="text-text-muted hover:text-accent-red transition-colors p-1 cursor-pointer"
+                    title="Delete Mission"
                 >
                     <Trash2 size={14} />
                 </button>
@@ -51,7 +53,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 {quest.status === 'created' && (
                     <button
                         onClick={() => onAction(quest.id, 'start')}
-                        className="btn btn-primary flex-1 justify-center gap-2"
+                        className="btn btn-primary flex-1 justify-center gap-2 cursor-pointer"
                     >
                         <Play size={14} /> Start
                     </button>
@@ -59,18 +61,18 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 {quest.status === 'active' && (
                     <button
                         onClick={() => onAction(quest.id, 'complete')}
-                        className="btn btn-primary flex-1 justify-center gap-2 bg-accent-green hover:bg-accent-green/80 border-none"
+                        className="btn btn-primary flex-1 justify-center gap-2 bg-accent-green hover:bg-accent-green/80 border-none cursor-pointer"
                     >
                         <CheckCircle size={14} /> Complete
                     </button>
                 )}
                 {quest.status === 'completed' && (
-                    <button
-                        onClick={() => onAction(quest.id, 'restart')}
-                        className="btn btn-outline flex-1 justify-center gap-2"
+                    <Link
+                        to="/achievements"
+                        className="btn btn-outline flex-1 justify-center gap-2 border-accent-green/30 text-accent-green hover:bg-accent-green/5 no-underline"
                     >
-                        <RefreshCcw size={14} /> Restart
-                    </button>
+                        <Award size={14} /> View Reward
+                    </Link>
                 )}
             </div>
         </motion.div>
