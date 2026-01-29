@@ -1,0 +1,205 @@
+:root {
+  /* VS Code Dark+ inspired palette */
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #37373d;
+
+  --accent-blue: #007acc;
+  --accent-purple: #6a40d5;
+  --accent-green: #4ec9b0;
+  --accent-red: #f44747;
+  --accent-orange: #ce9178;
+
+  --text-main: #cccccc;
+  --text-muted: #858585;
+  --text-bright: #ffffff;
+
+  --glass-bg: rgba(30, 30, 30, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  --font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-bright);
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  /* More blocky VS Code style */
+  box-shadow: var(--glass-shadow);
+}
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+
+.btn-primary {
+  background-color: var(--accent-blue);
+  color: white;
+}
+
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  border-color: var(--glass-border);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--glass-border);
+}
+
+.btn-outline:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--text-muted);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.logo-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-bright);
+  padding: 6px 14px;
+  border: 1px solid var(--accent-blue);
+  border-radius: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+input,
+textarea {
+  background: #3c3c3c;
+  border: 1px solid transparent;
+  border-radius: 0;
+  padding: 8px 12px;
+  color: #cccccc;
+  width: 100%;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--accent-blue);
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.center-vh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+nav.header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 1rem;
+  height: 48px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  /* Push to the right */
+}
+
+footer.main-footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--glass-border);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade {
+  animation: fadeIn 0.3s ease-out forwards;
+}
