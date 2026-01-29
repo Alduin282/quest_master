@@ -6,12 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 const AchievementCard = ({ achievement }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const iconSize = 48;
-    const icons = {
-        'Quest Started': <Zap size={iconSize} className="text-accent-blue" />,
-        'First Step': <Star size={iconSize} className="text-accent-orange" />,
-        'Quest Master': <Trophy size={iconSize} className="text-accent-purple" />,
-        'Legendary Status': <Shield size={iconSize} className="text-accent-red" />
-    };
 
     return (
         <motion.div
@@ -21,7 +15,7 @@ const AchievementCard = ({ achievement }) => {
             className="glass-card flex items-center gap-8 p-6 border-l-4 border-l-accent-blue transition-all duration-300"
         >
             <div className="bg-bg-tertiary p-5 rounded-sm border border-glass-border shrink-0 flex items-center justify-center">
-                {icons[achievement.name] || <Award size={iconSize} className="text-accent-blue" />}
+                <Award size={iconSize} className="text-accent-blue" />
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
@@ -41,7 +35,10 @@ const AchievementCard = ({ achievement }) => {
 
                 <div className="bg-white/5 p-2 rounded border border-white/5 mt-2">
                     <div className="flex items-center justify-between gap-4">
-                        <span className="text-xs font-bold text-accent-blue/80 uppercase tracking-widest truncate">
+                        <span
+                            className="text-xs font-bold text-accent-blue/80 uppercase tracking-widest truncate"
+                            title={achievement.quest_title}
+                        >
                             Mission: {achievement.quest_title}
                         </span>
                         {achievement.quest_description && (

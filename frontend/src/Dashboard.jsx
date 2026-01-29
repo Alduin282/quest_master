@@ -133,7 +133,7 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 )}
                 {quest.status === 'completed' && (
                     <Link
-                        to="/achievements"
+                        to={`/achievements?quest_id=${quest.id}`}
                         className="btn btn-outline flex-1 justify-center gap-2 border-accent-green/30 text-accent-green hover:bg-accent-green/5 no-underline"
                     >
                         <Award size={14} /> View Reward
