@@ -66,7 +66,7 @@ export const AchievementCard = React.forwardRef(({ achievement, isHighlighted },
                         {achievement.name}
                     </h3>
                     <div className="text-[9px] font-mono whitespace-nowrap uppercase tracking-tighter bg-white/5 opacity-60 px-1.5 py-0.5 rounded shrink-0">
-                        {new Date(achievement.awarded_at).toLocaleString([], {
+                        {new Date(achievement.awarded_at).toLocaleString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',

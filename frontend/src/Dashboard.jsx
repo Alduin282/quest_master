@@ -92,7 +92,7 @@ export const QuestCard = ({ quest, onAction, onDelete }) => {
             {quest.status === QUEST_STATUS.active && quest.end_time && (
                 <div className="flex items-center gap-2 text-accent-orange mb-6 text-xs font-mono bg-accent-orange/5 p-2 rounded">
                     <Clock size={14} />
-                    <span>Due: {new Date(quest.end_time).toLocaleString([], {
+                    <span>Due: {new Date(quest.end_time).toLocaleString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
