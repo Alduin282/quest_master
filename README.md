@@ -38,6 +38,7 @@ Quest Master is a gamified task management application that turns your daily to-
 2.  **Friend System**: Add friends and view their "Hall of Fame".
 3.  **Social Quests**: Challenge friends to complete specific quests.
 4.  **AI-Generated Art**: Use Generative AI to create unique, one-of-a-kind icons and artwork for your achievements based on the quest description.
+5.  Strengthening account security and recovery
 
 ## 📦 Installation & Setup
 
