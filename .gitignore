@@ -19,3 +19,6 @@ staticfiles/
 # OS
 Thumbs.db
 Desktop.ini
+
+# Environment variables
+.env

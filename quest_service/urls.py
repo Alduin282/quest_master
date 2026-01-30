@@ -16,7 +16,8 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import TemplateView
 from rest_framework.authtoken.views import obtain_auth_token
 from quests.auth_views import RegisterView
 
@@ -25,4 +26,6 @@ urlpatterns = [
     path("api/", include("quests.urls")),
     path("api-token-auth/", obtain_auth_token),
     path("api/register/", RegisterView.as_view(), name="register"),
+    # Catch-all for React SPA (must be last)
+    re_path(r"^.*$", TemplateView.as_view(template_name="index.html")),
 ]

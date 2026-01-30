@@ -8,6 +8,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  // Base URL for production (Django serves static files from /static/)
+  base: '/static/',
   test: {
     globals: true,
     environment: 'jsdom',
