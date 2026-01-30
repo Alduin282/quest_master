@@ -1,8 +1,9 @@
-# Quest Master 🛡️
+# Quest Master (prototype) 🛡️
 
 Quest Master is a gamified task management application that turns your daily to-dos into an RPG adventure. Complete quests, earn XP, and unlock unique achievements to build your "Hall of Fame".
 
-![Dashboard Screenshot Placeholder](screenshots/dashboard.png)
+<img width="2540" height="1309" alt="image" src="https://github.com/user-attachments/assets/889f90d5-5f30-4acd-b115-053279119c70" />
+
 
 ## 🌟 Features
 
@@ -21,7 +22,8 @@ Quest Master is a gamified task management application that turns your daily to-
   - 💎 Insane → **Diamond**
 - **Visual Gallery**: A beautiful "Hall of Fame" to showcase your earned trophies with specialized visual effects for high-tier rewards.
 
-![Achievements Screenshot Placeholder](screenshots/achievements.png)
+<img width="2546" height="1307" alt="image" src="https://github.com/user-attachments/assets/c45c9b1a-409b-40f5-a6ee-5a0762a42167" />
+
 
 ## 🛠️ Tech Stack
 
@@ -31,8 +33,6 @@ Quest Master is a gamified task management application that turns your daily to-
 - **Animations**: Framer Motion
 
 ## 🚀 Future Roadmap
-
-We are actively working on expanding the social and interactive aspects of Quest Master:
 
 1.  **Telegram Notifications**: Get real-time alerts about quest deadlines and earned achievements directly in Telegram.
 2.  **Friend System**: Add friends and view their "Hall of Fame".
