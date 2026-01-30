@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from './api';
 import { Plus, Play, CheckCircle, RefreshCcw, Clock, Target, Trash2, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DIFFICULTY_LABELS, DIFFICULTY_LEVELS, ERROR_MESSAGES, FORM_LABELS, QUEST_ACTIONS, QUEST_STATUS, TIME_LABELS, UI_LABELS } from './constants';
+import { DIFFICULTY_LABELS, DIFFICULTY_LEVELS, FORM_LABELS, QUEST_ACTIONS, QUEST_STATUS, TIME_LABELS, UI_LABELS } from './constants';
 
 export const StatusBadge = ({ status }) => {
     const styles = {

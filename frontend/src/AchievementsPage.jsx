@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from './api';
-import { Award, Trophy, Star, Shield, Zap } from 'lucide-react';
+import { Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ACHIEVEMENT_RARITY_LABELS, QUEST_ACTIONS, UI_LABELS } from './constants';
 
