@@ -3,8 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 import api from './api';
 import { Award, Trophy, Star, Shield, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ACHIEVEMENT_RARITY_LABELS, QUEST_ACTIONS, UI_LABELS } from './constants';
 
-const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) => {
+export const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const iconSize = 48;
 
@@ -13,21 +14,21 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
             border: 'border-l-[#cd7f32]',
             bg: 'bg-[#cd7f32]/5',
             iconColor: 'text-[#cd7f32]',
-            label: '🥉 Bronze',
+            label: ACHIEVEMENT_RARITY_LABELS.bronze,
             accent: '#cd7f32'
         },
         silver: {
             border: 'border-l-accent-blue',
             bg: 'bg-accent-blue/5',
             iconColor: 'text-accent-blue',
-            label: '🥈 Silver',
+            label: ACHIEVEMENT_RARITY_LABELS.silver,
             accent: '#007acc'
         },
         gold: {
             border: 'border-l-[#ffd700]',
             bg: 'bg-[#ffd700]/5',
             iconColor: 'text-[#ffd700]',
-            label: '🥇 Gold',
+            label: ACHIEVEMENT_RARITY_LABELS.gold,
             accent: '#ffd700',
             glow: 'shadow-[0_0_15px_rgba(255,215,0,0.2)]'
         },
@@ -35,7 +36,7 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
             border: 'border-l-[#b9f2ff]',
             bg: 'bg-[#b9f2ff]/5',
             iconColor: 'text-[#b9f2ff]',
-            label: '💎 Diamond',
+            label: ACHIEVEMENT_RARITY_LABELS.diamond,
             accent: '#b9f2ff'
         }
     };
@@ -78,18 +79,18 @@ const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) =
                 <div className="bg-white/5 p-2 rounded border border-white/5 mt-2">
                     <div className="flex items-center justify-between gap-4">
                         <span
-                            className={`text-xs font-bold uppercase tracking-widest truncate`}
+                            className={`text-xs font-bold uppercase tracking-widest truncate flex-1 min-w-0`}
                             style={{ color: style.accent }}
                             title={achievement.quest_title}
                         >
-                            Quest: {achievement.quest_title}
+                            {UI_LABELS.questPrefix}{achievement.quest_title}
                         </span>
                         {achievement.quest_description && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                className="text-[10px] text-text-muted hover:text-white cursor-pointer uppercase font-bold"
+                                className="text-[10px] text-text-muted hover:text-white cursor-pointer uppercase font-bold whitespace-nowrap shrink-0"
                             >
-                                {isExpanded ? 'Hide description' : 'Read description'}
+                                {isExpanded ? QUEST_ACTIONS.hideDescription : QUEST_ACTIONS.readDescription}
                             </button>
                         )}
                     </div>

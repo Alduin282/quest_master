@@ -3,23 +3,24 @@ import { Link } from 'react-router-dom';
 import api from './api';
 import { Plus, Play, CheckCircle, RefreshCcw, Clock, Target, Trash2, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DIFFICULTY_LABELS, DIFFICULTY_LEVELS, ERROR_MESSAGES, FORM_LABELS, QUEST_ACTIONS, QUEST_STATUS, TIME_LABELS, UI_LABELS } from './constants';
 
-const StatusBadge = ({ status }) => {
+export const StatusBadge = ({ status }) => {
     const styles = {
-        created: 'bg-accent-blue/10 text-accent-blue border-accent-blue/20',
-        active: 'bg-accent-orange/10 text-accent-orange border-accent-orange/20',
-        completed: 'bg-accent-green/10 text-accent-green border-accent-green/20',
-        failed: 'bg-accent-red/10 text-accent-red border-accent-red/20'
+        [QUEST_STATUS.created]: 'bg-accent-blue/10 text-accent-blue border-accent-blue/20',
+        [QUEST_STATUS.active]: 'bg-accent-orange/10 text-accent-orange border-accent-orange/20',
+        [QUEST_STATUS.completed]: 'bg-accent-green/10 text-accent-green border-accent-green/20',
+        [QUEST_STATUS.failed]: 'bg-accent-red/10 text-accent-red border-accent-red/20'
     };
 
     return (
-        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${styles[status]}`}>
+        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${styles[status]}`} >
             {status}
-        </span>
+        </span >
     );
 };
 
-const QuestCard = ({ quest, onAction, onDelete }) => {
+export const QuestCard = ({ quest, onAction, onDelete }) => {
     const [isStarting, setIsStarting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -54,17 +55,17 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                 <button
                     onClick={() => onDelete(quest.id)}
                     className="text-text-muted hover:text-accent-red transition-colors p-1 cursor-pointer"
-                    title="Delete Quest"
+                    title={QUEST_ACTIONS.delete}
                 >
                     <Trash2 size={14} />
                 </button>
             </div>
 
             <div className="flex gap-2 mb-2">
-                {quest.difficulty === 'easy' && <span className="text-[10px] font-bold text-accent-green uppercase tracking-widest bg-accent-green/10 px-2 py-0.5 rounded border border-accent-green/20">🌱 Easy</span>}
-                {quest.difficulty === 'medium' && <span className="text-[10px] font-bold text-accent-blue uppercase tracking-widest bg-accent-blue/10 px-2 py-0.5 rounded border border-accent-blue/20">⚔️ Medium</span>}
-                {quest.difficulty === 'hard' && <span className="text-[10px] font-bold text-accent-orange uppercase tracking-widest bg-accent-orange/10 px-2 py-0.5 rounded border border-accent-orange/20">🔥 Hard</span>}
-                {quest.difficulty === 'insane' && <span className="text-[10px] font-bold text-accent-red uppercase tracking-widest bg-accent-red/10 px-2 py-0.5 rounded border border-accent-red/20 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse">💀 Insane</span>}
+                {quest.difficulty === DIFFICULTY_LEVELS.easy && <span className="text-[10px] font-bold text-accent-green uppercase tracking-widest bg-accent-green/10 px-2 py-0.5 rounded border border-accent-green/20">{DIFFICULTY_LABELS.easy}</span>}
+                {quest.difficulty === DIFFICULTY_LEVELS.medium && <span className="text-[10px] font-bold text-accent-blue uppercase tracking-widest bg-accent-blue/10 px-2 py-0.5 rounded border border-accent-blue/20">{DIFFICULTY_LABELS.medium}</span>}
+                {quest.difficulty === DIFFICULTY_LEVELS.hard && <span className="text-[10px] font-bold text-accent-orange uppercase tracking-widest bg-accent-orange/10 px-2 py-0.5 rounded border border-accent-orange/20">{DIFFICULTY_LABELS.hard}</span>}
+                {quest.difficulty === DIFFICULTY_LEVELS.insane && <span className="text-[10px] font-bold text-accent-red uppercase tracking-widest bg-accent-red/10 px-2 py-0.5 rounded border border-accent-red/20 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse">{DIFFICULTY_LABELS.insane}</span>}
             </div>
 
             <h3
@@ -83,12 +84,12 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="text-[10px] uppercase tracking-widest text-accent-blue mt-2 hover:text-white font-bold cursor-pointer"
                     >
-                        {isExpanded ? 'Show less' : 'Read more'}
+                        {isExpanded ? QUEST_ACTIONS.showLess : QUEST_ACTIONS.readMore}
                     </button>
                 )}
             </div>
 
-            {quest.status === 'active' && quest.end_time && (
+            {quest.status === QUEST_STATUS.active && quest.end_time && (
                 <div className="flex items-center gap-2 text-accent-orange mb-6 text-xs font-mono bg-accent-orange/5 p-2 rounded">
                     <Clock size={14} />
                     <span>Due: {new Date(quest.end_time).toLocaleString([], {
@@ -102,20 +103,23 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
             )}
 
             <div className="flex flex-col gap-2 mt-auto">
-                {quest.status === 'created' && (
+                {quest.status === QUEST_STATUS.created && (
                     <>
                         {isStarting ? (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
-                                className="space-y-4 bg-accent-blue/5 p-4 rounded border border-accent-blue/20 mb-2"
+                                className="space-y-4 bg-accent-blue/5 p-4 rounded border border-accent-blue/20 mb-2 overflow-hidden"
                             >
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue block mb-1">Quest Duration</label>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent-blue block mb-1">
+                                    Quest Duration
+                                </label>
 
                                 <div className="grid grid-cols-3 gap-2">
                                     <div className="space-y-1">
-                                        <label className="text-[9px] text-text-muted uppercase">Days</label>
+                                        <label htmlFor={`days-${quest.id}`} className="text-[9px] text-text-muted uppercase">{TIME_LABELS.days}</label>
                                         <input
+                                            id={`days-${quest.id}`}
                                             type="number"
                                             value={days}
                                             onChange={(e) => setDays(Math.max(0, parseInt(e.target.value) || 0))}
@@ -124,8 +128,9 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[9px] text-text-muted uppercase">Hours</label>
+                                        <label htmlFor={`hours-${quest.id}`} className="text-[9px] text-text-muted uppercase">{TIME_LABELS.hours}</label>
                                         <input
+                                            id={`hours-${quest.id}`}
                                             type="number"
                                             value={hours}
                                             onChange={(e) => setHours(Math.max(0, parseInt(e.target.value) || 0))}
@@ -134,8 +139,9 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[9px] text-text-muted uppercase">Min</label>
+                                        <label htmlFor={`mins-${quest.id}`} className="text-[9px] text-text-muted uppercase">{TIME_LABELS.minutes}</label>
                                         <input
+                                            id={`mins-${quest.id}`}
                                             type="number"
                                             value={minutes}
                                             onChange={(e) => setMinutes(Math.max(0, parseInt(e.target.value) || 0))}
@@ -149,11 +155,11 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                                     <button
                                         onClick={handleStartConfirm}
                                         className="btn btn-primary text-xs py-1.5 px-4 flex-1"
-                                    >Confirm</button>
+                                    >{UI_LABELS.confirm}</button>
                                     <button
                                         onClick={() => setIsStarting(false)}
                                         className="btn btn-ghost text-xs py-1.5 px-4 bg-white/5 opacity-60 hover:opacity-100"
-                                    >Cancel</button>
+                                    >{UI_LABELS.cancel}</button>
                                 </div>
                             </motion.div>
                         ) : (
@@ -161,33 +167,33 @@ const QuestCard = ({ quest, onAction, onDelete }) => {
                                 onClick={() => setIsStarting(true)}
                                 className="btn btn-primary flex-1 justify-center gap-2 cursor-pointer"
                             >
-                                <Play size={14} /> Start Quest
+                                <Play size={14} /> {QUEST_ACTIONS.start}
                             </button>
                         )}
                     </>
                 )}
-                {quest.status === 'active' && (
+                {quest.status === QUEST_STATUS.active && (
                     <button
                         onClick={() => onAction(quest.id, 'complete')}
                         className="btn btn-primary flex-1 justify-center gap-2 bg-accent-green hover:bg-accent-green/80 border-none cursor-pointer"
                     >
-                        <CheckCircle size={14} /> Complete
+                        <CheckCircle size={14} /> {QUEST_ACTIONS.complete}
                     </button>
                 )}
-                {quest.status === 'completed' && (
+                {quest.status === QUEST_STATUS.completed && (
                     <Link
                         to={`/achievements?quest_id=${quest.id}`}
                         className="btn btn-outline flex-1 justify-center gap-2 border-accent-green/30 text-accent-green hover:bg-accent-green/5 no-underline"
                     >
-                        <Award size={14} /> View Reward
+                        <Award size={14} /> {QUEST_ACTIONS.viewReward}
                     </Link>
                 )}
-                {quest.status === 'failed' && (
+                {quest.status === QUEST_STATUS.failed && (
                     <button
                         onClick={() => onAction(quest.id, 'restart')}
                         className="btn btn-outline flex-1 justify-center gap-2 border-accent-red/30 text-accent-red hover:bg-accent-red/5 cursor-pointer"
                     >
-                        <RefreshCcw size={14} /> Restart Quest
+                        <RefreshCcw size={14} /> {QUEST_ACTIONS.restart}
                     </button>
                 )}
             </div>
@@ -203,10 +209,10 @@ const Dashboard = () => {
 
     const sortQuests = (questList) => {
         const priority = {
-            'active': 1,
-            'created': 2,
-            'failed': 3,
-            'completed': 4
+            [QUEST_STATUS.active]: 1,
+            [QUEST_STATUS.created]: 2,
+            [QUEST_STATUS.failed]: 3,
+            [QUEST_STATUS.completed]: 4
         };
 
         return [...questList].sort((a, b) => {
@@ -237,7 +243,7 @@ const Dashboard = () => {
         try {
             const res = await api.post('quests/', newQuest);
             setQuests(sortQuests([res.data, ...quests]));
-            setNewQuest({ title: '', description: '', planned_achievement_name: '', difficulty: 'medium' });
+            setNewQuest({ title: '', description: '', planned_achievement_name: '', difficulty: DIFFICULTY_LEVELS.medium });
             setShowAddForm(false);
         } catch (err) {
             alert('Error creating quest. Make sure all fields are filled.');
@@ -283,10 +289,10 @@ const Dashboard = () => {
                     onClick={() => setShowAddForm(!showAddForm)}
                     className={`btn ${showAddForm ? 'btn-secondary' : 'btn-primary'} px-6 py-2.5 rounded-sm`}
                 >
-                    {showAddForm ? 'Cancel' : (
+                    {showAddForm ? UI_LABELS.cancel : (
                         <>
                             <Plus size={18} />
-                            New Quest
+                            {QUEST_ACTIONS.newQuest}
                         </>
                     )}
                 </button>
@@ -304,10 +310,11 @@ const Dashboard = () => {
                             <div className="space-y-8 mb-10">
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
-                                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Quest Title</label>
+                                        <label htmlFor="quest-title" className="text-xs font-bold uppercase tracking-widest text-text-muted">{FORM_LABELS.title}</label>
                                         <span className="text-[10px] text-text-muted">{newQuest.title.length}/255</span>
                                     </div>
                                     <input
+                                        id="quest-title"
                                         value={newQuest.title}
                                         onChange={(e) => setNewQuest({ ...newQuest, title: e.target.value })}
                                         placeholder="E.g. Daily Workout"
@@ -318,8 +325,9 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Quest Description</label>
+                                    <label htmlFor="quest-desc" className="text-xs font-bold uppercase tracking-widest text-text-muted">{FORM_LABELS.description}</label>
                                     <textarea
+                                        id="quest-desc"
                                         value={newQuest.description}
                                         onChange={(e) => setNewQuest({ ...newQuest, description: e.target.value })}
                                         placeholder="Operation details and objectives..."
@@ -329,25 +337,27 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Difficulty Level</label>
+                                    <label htmlFor="difficulty" className="text-xs font-bold uppercase tracking-widest text-text-muted">{FORM_LABELS.difficulty}</label>
                                     <select
+                                        id="difficulty"
                                         value={newQuest.difficulty}
                                         onChange={(e) => setNewQuest({ ...newQuest, difficulty: e.target.value })}
                                         className="w-full bg-[#3c3c3c] border border-transparent focus:border-accent-blue p-3 text-text-main outline-none cursor-pointer"
                                     >
-                                        <option value="easy" className="bg-[#2d2d2d] text-[#4ec9b0]">🌱 Easy (Bronze Reward)</option>
-                                        <option value="medium" className="bg-[#2d2d2d] text-[#4fc1ff]">⚔️ Medium (Silver Reward)</option>
-                                        <option value="hard" className="bg-[#2d2d2d] text-[#ce9178]">🔥 Hard (Gold Reward)</option>
-                                        <option value="insane" className="bg-[#2d2d2d] text-[#f44747]">💀 Insane (Diamond Reward)</option>
+                                        <option value={DIFFICULTY_LEVELS.easy} className="bg-[#2d2d2d] text-[#4ec9b0]">{DIFFICULTY_LABELS.easy} (Bronze Reward)</option>
+                                        <option value={DIFFICULTY_LEVELS.medium} className="bg-[#2d2d2d] text-[#4fc1ff]">{DIFFICULTY_LABELS.medium} (Silver Reward)</option>
+                                        <option value={DIFFICULTY_LEVELS.hard} className="bg-[#2d2d2d] text-[#ce9178]">{DIFFICULTY_LABELS.hard} (Gold Reward)</option>
+                                        <option value={DIFFICULTY_LEVELS.insane} className="bg-[#2d2d2d] text-[#f44747]">{DIFFICULTY_LABELS.insane} (Diamond Reward)</option>
                                     </select>
                                 </div>
 
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
-                                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Codename for Future Reward</label>
+                                        <label htmlFor="achievement-name" className="text-xs font-bold uppercase tracking-widest text-text-muted">{FORM_LABELS.rewardName}</label>
                                         <span className="text-[10px] text-text-muted">{newQuest.planned_achievement_name.length}/255</span>
                                     </div>
                                     <input
+                                        id="achievement-name"
                                         value={newQuest.planned_achievement_name}
                                         onChange={(e) => setNewQuest({ ...newQuest, planned_achievement_name: e.target.value })}
                                         placeholder="E.g. Master of Cardio"
@@ -359,7 +369,7 @@ const Dashboard = () => {
 
                             <div className="flex justify-end pt-6 border-t border-glass-border">
                                 <button type="submit" className="btn btn-primary px-12 py-4 font-bold text-base uppercase tracking-widest">
-                                    Deploy Quest
+                                    {QUEST_ACTIONS.deploy}
                                 </button>
                             </div>
                         </form>
