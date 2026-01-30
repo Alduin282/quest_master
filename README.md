@@ -42,17 +42,44 @@ Quest Master is a gamified task management application that turns your daily to-
 
 ## 📦 Installation & Setup
 
-### Backend (Django)
-```bash
-cd quest_service
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-```
+### Option 1: Docker (Recommended)
+The easiest way to run the full application (Frontend + Backend + Database).
 
-### Frontend (React)
+1.  **Create Environment File**:
+    Copy the example file and fill in your secrets (or leave defaults for dev).
+    ```bash
+    cp .env.example .env
+    ```
+
+2.  **Run with Docker Compose**:
+    ```bash
+    docker-compose up --build
+    ```
+
+3.  **Open App**:
+    Go to [http://localhost:8000](http://localhost:8000).
+
+---
+
+### Option 2: Local Development (Manual)
+If you want to run backend and frontend separately for development.
+
+#### Backend (Django)
+1.  Create `.env` file in the project root (see `.env.example`).
+2.  Run commands:
+    ```bash
+    # Install dependencies
+    pip install -r requirements.txt
+    
+    # Run migrations
+    python manage.py migrate
+
+    # Start server
+    python manage.py runserver
+    ```
+
+#### Frontend (React)
+Open a new terminal.
 ```bash
 cd frontend
 npm install
