@@ -56,7 +56,30 @@ class QuestViewSet(viewsets.ModelViewSet):
         rarity = difficulty_to_rarity.get(quest.difficulty, "silver")
 
         # Создаем ачивку с учетом редкости
-        Achievement.objects.create(user=request.user, quest=quest, name=quest.planned_achievement_name, rarity=rarity)
+        achievement = Achievement.objects.create(
+            user=request.user, quest=quest, name=quest.planned_achievement_name, rarity=rarity
+        )
+
+        # Генерируем изображение для достижения
+        from .image_generator import generate_achievement_image
+
+        try:
+            image_content = generate_achievement_image(
+                quest_title=quest.title,
+                quest_description=quest.description,
+                achievement_name=quest.planned_achievement_name,
+                rarity=rarity,
+            )
+            if image_content:
+                # Сохраняем изображение с уникальным именем
+                filename = f"achievement_{achievement.id}_{quest.id}.png"
+                achievement.image.save(filename, image_content, save=True)
+        except Exception as e:
+            # Логируем ошибку, но не прерываем создание достижения
+            import logging
+
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to generate image for achievement {achievement.id}: {e}")
 
         return Response(QuestSerializer(quest).data)
 

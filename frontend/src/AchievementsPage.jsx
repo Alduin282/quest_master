@@ -57,8 +57,38 @@ export const AchievementCard = React.forwardRef(({ achievement, isHighlighted },
             transition={{ duration: 0.5 }}
             className={`glass-card flex items-center gap-8 p-6 border-l-4 transition-all duration-300 ${isHighlighted ? 'ring-2 ring-accent-blue/30 shadow-[0_0_20px_rgba(0,122,204,0.3)]' : style.border} ${style.glow || ''} ${style.pulse || ''}`}
         >
-            <div className="bg-bg-tertiary p-5 rounded-sm border border-glass-border shrink-0 flex items-center justify-center">
-                <Award size={iconSize} className={style.iconColor} />
+            <div
+                className="relative shrink-0"
+                style={{
+                    width: '120px',
+                    height: '120px',
+                    padding: '4px',
+                    background: `linear-gradient(135deg, ${style.accent}40, ${style.accent}20)`,
+                    borderRadius: '8px',
+                    border: `3px solid ${style.accent}`,
+                    boxShadow: `0 0 20px ${style.accent}30`
+                }}
+            >
+                {achievement.image ? (
+                    <img
+                        src={achievement.image}
+                        alt={achievement.name}
+                        className="w-full h-full object-cover rounded"
+                        style={{ display: 'block' }}
+                        onError={(e) => {
+                            // Fallback to icon if image fails to load
+                            e.target.style.display = 'none';
+                            const fallbackDiv = e.target.nextElementSibling;
+                            if (fallbackDiv) fallbackDiv.style.display = 'flex';
+                        }}
+                    />
+                ) : null}
+                <div
+                    className="w-full h-full bg-bg-tertiary rounded flex items-center justify-center"
+                    style={{ display: achievement.image ? 'none' : 'flex' }}
+                >
+                    <Award size={48} className={style.iconColor} />
+                </div>
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">

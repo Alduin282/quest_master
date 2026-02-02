@@ -58,6 +58,7 @@ class Achievement(models.Model):
     quest = models.OneToOneField(Quest, on_delete=models.CASCADE, related_name="achievement")
     name = models.CharField(max_length=255)
     icon_key = models.CharField(max_length=50, default="star")
+    image = models.ImageField(upload_to="achievements/", null=True, blank=True)
     rarity = models.CharField(max_length=20, choices=RARITY_CHOICES, default="silver")
     awarded_at = models.DateTimeField(auto_now_add=True)
 
