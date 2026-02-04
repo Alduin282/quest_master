@@ -28,10 +28,13 @@ urlpatterns = [
     path("api/", include("quests.urls")),
     path("api-token-auth/", obtain_auth_token),
     path("api/register/", RegisterView.as_view(), name="register"),
-    # Catch-all for React SPA (must be last)
-    re_path(r"^.*$", TemplateView.as_view(template_name="index.html")),
 ]
 
 # Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Catch-all for React SPA (must be last)
+urlpatterns += [
+    re_path(r"^.*$", TemplateView.as_view(template_name="index.html")),
+]

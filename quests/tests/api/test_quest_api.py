@@ -91,6 +91,8 @@ class TestQuestAPI:
 
         # Assert
         assert response.status_code == status.HTTP_200_OK
+        assert "quest" in response.data
+        assert "image_generated" in response.data
         quest.refresh_from_db()
         assert Achievement.objects.filter(quest=quest).exists()
 
@@ -113,6 +115,7 @@ class TestQuestAPI:
 
         # Assert
         assert response.status_code == status.HTTP_200_OK
+        assert response.data["quest"]["status"] == "completed"
         achievement = Achievement.objects.get(quest=quest)
         assert achievement.rarity == "diamond"
 

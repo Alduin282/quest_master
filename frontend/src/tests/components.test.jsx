@@ -80,11 +80,8 @@ describe('QuestCard Visuals', () => {
         const onAction = vi.fn();
         renderWithRouter(<QuestCard quest={mockQuest} onAction={onAction} />);
 
-        // Open modal
         fireEvent.click(screen.getByText(QUEST_ACTIONS.start));
 
-        // Fill inputs
-        // Fill inputs
         const daysInput = screen.getByLabelText(new RegExp(TIME_LABELS.days, 'i'));
         const hoursInput = screen.getByLabelText(new RegExp(TIME_LABELS.hours, 'i'));
         const minutesInput = screen.getByLabelText(new RegExp(TIME_LABELS.minutes, 'i'));
@@ -124,5 +121,56 @@ describe('QuestCard Expansion', () => {
 
         fireEvent.click(screen.getByText(QUEST_ACTIONS.showLess));
         expect(screen.getByText(QUEST_ACTIONS.readMore)).toBeInTheDocument();
+    });
+});
+
+describe('QuestCard Completion', () => {
+    const mockQuest = {
+        id: 3,
+        title: 'Active Quest',
+        description: 'Testing completion',
+        status: QUEST_STATUS.active,
+        difficulty: DIFFICULTY_LEVELS.medium
+    };
+
+    it('shows loading state during completion', async () => {
+        const onAction = vi.fn(() => new Promise(resolve => setTimeout(() => resolve({
+            data: { quest: { ...mockQuest, status: QUEST_STATUS.completed }, image_generated: true }
+        }), 100)));
+
+        renderWithRouter(<QuestCard quest={mockQuest} onAction={onAction} />);
+
+        const completeBtn = screen.getByText(QUEST_ACTIONS.complete);
+        fireEvent.click(completeBtn);
+
+        // Check button text changes to completing state
+        expect(screen.getByText(QUEST_ACTIONS.completing)).toBeInTheDocument();
+
+        // Button should be disabled
+        expect(completeBtn).toBeDisabled();
+
+        // Icon should have animate-spin class
+        const icon = completeBtn.querySelector('svg');
+        expect(icon).toHaveClass('animate-spin');
+    });
+
+    it('shows alert when image generation fails', async () => {
+        const onAction = vi.fn().mockResolvedValue({
+            data: { quest: { ...mockQuest, status: QUEST_STATUS.completed }, image_generated: false }
+        });
+
+        const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => { });
+
+        renderWithRouter(<QuestCard quest={mockQuest} onAction={onAction} />);
+
+        const completeBtn = screen.getByText(QUEST_ACTIONS.complete);
+        fireEvent.click(completeBtn);
+
+        // Wait for async call to finish
+        await vi.waitFor(() => {
+            expect(alertMock).toHaveBeenCalledWith(expect.stringContaining("couldn't generate your achievement image"));
+        });
+
+        alertMock.mockRestore();
     });
 });

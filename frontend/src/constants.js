@@ -29,6 +29,7 @@ export const QUEST_ACTIONS = {
     readDescription: 'Read description',
     hideDescription: 'Hide description',
     complete: 'Complete',
+    completing: 'Generating Reward...',
     newQuest: 'New Quest',
     deploy: 'Deploy Quest'
 };

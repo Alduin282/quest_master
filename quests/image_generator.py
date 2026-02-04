@@ -1,64 +1,53 @@
 import logging
 import requests
+import os
 from urllib.parse import quote
 from django.core.files.base import ContentFile
+from dotenv import load_dotenv
 
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+WIDTH_IMAGE_SIZE = 1024
+HEIGHT_IMAGE_SIZE = 1024
+MODEL = "nanobanana"
+
 
 def generate_achievement_image(
-    quest_title: str, quest_description: str, achievement_name: str, rarity: str
+    quest_title: str, quest_description: str, achievement_name: str, seed: int = None
 ) -> ContentFile | None:
-    """
-    Generate an achievement image using Pollinations.ai API.
-
-    Args:
-        quest_title: Title of the quest
-        quest_description: Description of the quest
-        achievement_name: Name of the achievement
-        rarity: Rarity level (bronze, silver, gold, diamond)
-
-    Returns:
-        ContentFile with image data or None if generation failed
-    """
     try:
-        # Map rarity to visual style
-        rarity_styles = {
-            "bronze": "bronze medal, warm copper tones, beginner achievement",
-            "silver": "silver medal, cool metallic tones, intermediate achievement",
-            "gold": "golden trophy, radiant gold tones, legendary achievement, glowing aura",
-            "diamond": "diamond crystal, brilliant prismatic light, mythic achievement, ethereal glow",
-        }
-
-        style = rarity_styles.get(rarity, rarity_styles["silver"])
-
         # Construct prompt for image generation
         prompt = (
-            f"Fantasy RPG achievement badge icon for '{achievement_name}'. "
-            f"Quest theme: {quest_title}. "
-            f"Style: {style}. "
-            f"Centered icon, game UI design, detailed, vibrant colors, "
-            f"digital art, professional game asset"
+            f"Нужно нарисовать ачивку с названием '{achievement_name}'. "
+            f"Квест после которого дается ачивка называется: {quest_title}. "
+            f"digital art"
         )
 
         # Truncate description if too long to avoid URL length issues
         if quest_description and len(quest_description) < 100:
-            prompt += f". Context: {quest_description}"
+            prompt += f". Описание квеста ачивки: {quest_description}"
 
         # URL encode the prompt
         encoded_prompt = quote(prompt)
 
         # Pollinations.ai API endpoint
-        api_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+        api_key = os.environ.get("POLLINATIONS_API_KEY", "")
+        api_url = f"https://gen.pollinations.ai/image/{encoded_prompt}?model={MODEL}&key={api_key}"
 
         # Add parameters for better quality
-        params = {"width": 512, "height": 512, "seed": hash(achievement_name) % 10000, "nologo": "true"}
+        params = {
+            "width": WIDTH_IMAGE_SIZE,
+            "height": HEIGHT_IMAGE_SIZE,
+            "seed": seed if seed is not None else (hash(achievement_name) % 10000),
+            "nologo": "true",
+        }
 
         logger.info(f"Generating image for achievement: {achievement_name}")
 
         # Make request to Pollinations.ai
-        response = requests.get(api_url, params=params, timeout=30)
+        response = requests.get(api_url, params=params, timeout=60)
         response.raise_for_status()
 
         # Create ContentFile from response

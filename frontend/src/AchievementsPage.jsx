@@ -1,13 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from './api';
-import { Award } from 'lucide-react';
+import { Award, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ACHIEVEMENT_RARITY_LABELS, QUEST_ACTIONS, UI_LABELS } from './constants';
 
 export const AchievementCard = React.forwardRef(({ achievement, isHighlighted }, ref) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const iconSize = 48;
+    const [isRedrawing, setIsRedrawing] = useState(false);
+    const [imageUrl, setImageUrl] = useState(achievement.image);
+    const [imgError, setImgError] = useState(false);
+
+    const handleRedraw = async () => {
+        if (isRedrawing) return;
+        setIsRedrawing(true);
+        try {
+            const res = await api.post(`achievements/${achievement.id}/regenerate_image/`);
+
+            // Add a timestamp to bypass image cache
+            const newUrl = `${res.data.image}?t=${new Date().getTime()}`;
+
+            setImgError(false);
+            setImageUrl(newUrl);
+        } catch (err) {
+            alert('Failed to redraw achievement image. Please try again.');
+        } finally {
+            setIsRedrawing(false);
+        }
+    };
 
     const rarityStyles = {
         bronze: {
@@ -18,11 +38,11 @@ export const AchievementCard = React.forwardRef(({ achievement, isHighlighted },
             accent: '#cd7f32'
         },
         silver: {
-            border: 'border-l-accent-blue',
-            bg: 'bg-accent-blue/5',
-            iconColor: 'text-accent-blue',
+            border: 'border-l-[#a0a0a0]',
+            bg: 'bg-[#a0a0a0]/5',
+            iconColor: 'text-[#a0a0a0]',
             label: ACHIEVEMENT_RARITY_LABELS.silver,
-            accent: '#007acc'
+            accent: '#a0a0a0'
         },
         gold: {
             border: 'border-l-[#ffd700]',
@@ -37,7 +57,8 @@ export const AchievementCard = React.forwardRef(({ achievement, isHighlighted },
             bg: 'bg-[#b9f2ff]/5',
             iconColor: 'text-[#b9f2ff]',
             label: ACHIEVEMENT_RARITY_LABELS.diamond,
-            accent: '#b9f2ff'
+            accent: '#b9f2ff',
+            glow: 'diamond-glow'
         }
     };
 
@@ -69,42 +90,56 @@ export const AchievementCard = React.forwardRef(({ achievement, isHighlighted },
                     boxShadow: `0 0 20px ${style.accent}30`
                 }}
             >
-                {achievement.image ? (
+                {imageUrl ? (
                     <img
-                        src={achievement.image}
+                        src={imageUrl}
                         alt={achievement.name}
-                        className="w-full h-full object-cover rounded"
-                        style={{ display: 'block' }}
+                        className={`w-full h-full object-cover rounded transition-opacity duration-300 ${isRedrawing ? 'opacity-30' : 'opacity-100'}`}
+                        style={{ display: imgError ? 'none' : 'block' }}
+                        onLoad={() => {
+                            setImgError(false);
+                        }}
                         onError={(e) => {
-                            // Fallback to icon if image fails to load
-                            e.target.style.display = 'none';
-                            const fallbackDiv = e.target.nextElementSibling;
-                            if (fallbackDiv) fallbackDiv.style.display = 'flex';
+                            setImgError(true);
                         }}
                     />
                 ) : null}
                 <div
                     className="w-full h-full bg-bg-tertiary rounded flex items-center justify-center"
-                    style={{ display: achievement.image ? 'none' : 'flex' }}
+                    style={{ display: (!imageUrl || imgError) ? 'flex' : 'none' }}
                 >
                     <Award size={48} className={style.iconColor} />
                 </div>
             </div>
             <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-black text-text-bright mb-1 truncate" title={achievement.name}>
-                        {achievement.name}
-                    </h3>
-                    <div className="text-[9px] font-mono whitespace-nowrap uppercase tracking-tighter bg-white/5 opacity-60 px-1.5 py-0.5 rounded shrink-0">
-                        {new Date(achievement.awarded_at).toLocaleString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}
+                <div className="flex justify-between items-center mb-2">
+                    <div className="flex gap-2 items-center shrink-0">
+                        <button
+                            onClick={handleRedraw}
+                            disabled={isRedrawing}
+                            className={`p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group relative ${isRedrawing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            title="Redraw achievement image"
+                        >
+                            <RefreshCw
+                                size={12}
+                                className={`text-text-muted group-hover:text-white transition-all ${isRedrawing ? 'animate-spin' : ''}`}
+                            />
+                        </button>
+                        <div className="text-[9px] font-mono whitespace-nowrap uppercase tracking-tighter bg-white/5 opacity-60 px-1.5 py-0.5 rounded">
+                            {new Date(achievement.awarded_at).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </div>
                     </div>
                 </div>
+
+                <h3 className="text-xl font-black text-text-bright mb-1 truncate" title={achievement.name}>
+                    {achievement.name}
+                </h3>
 
                 <div className="bg-white/5 p-2 rounded border border-white/5 mt-2">
                     <div className="flex items-center justify-between gap-4">

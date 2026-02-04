@@ -3,6 +3,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { AchievementCard } from '../AchievementsPage';
 import { BrowserRouter } from 'react-router-dom';
 import { ACHIEVEMENT_RARITY_LABELS, QUEST_ACTIONS, UI_LABELS } from '../constants';
+import api from '../api';
+
+vi.mock('../api', () => ({
+    default: {
+        post: vi.fn(),
+        get: vi.fn(),
+    }
+}));
 
 const renderWithRouter = (ui) => {
     return render(ui, { wrapper: BrowserRouter });
@@ -39,7 +47,7 @@ describe('AchievementCard Visuals', () => {
 
     it.each([
         ['bronze', ACHIEVEMENT_RARITY_LABELS.bronze, 'border-l-[#cd7f32]'],
-        ['silver', ACHIEVEMENT_RARITY_LABELS.silver, 'border-l-accent-blue'],
+        ['silver', ACHIEVEMENT_RARITY_LABELS.silver, 'border-l-[#a0a0a0]'],
         ['gold', ACHIEVEMENT_RARITY_LABELS.gold, 'border-l-[#ffd700]'],
         ['diamond', ACHIEVEMENT_RARITY_LABELS.diamond, 'border-l-[#b9f2ff]']
     ])('displays correct label and style for %s rarity', (rarity, label, borderClass) => {
@@ -49,6 +57,24 @@ describe('AchievementCard Visuals', () => {
         expect(screen.getByText(label)).toBeInTheDocument();
         const card = screen.getByText('Master of React').closest('.glass-card');
         expect(card).toHaveClass(borderClass);
+    });
+
+    it('renders the achievement image when provided', () => {
+        const achievementWithImage = { ...mockAchievement, image: 'http://example.com/image.png' };
+        renderWithRouter(<AchievementCard achievement={achievementWithImage} />);
+
+        const img = screen.getByAltText('Master of React');
+        expect(img).toBeInTheDocument();
+        expect(img).toHaveAttribute('src', 'http://example.com/image.png');
+    });
+
+    it('renders fallback icon when no image is provided', () => {
+        const achievementWithoutImage = { ...mockAchievement, image: null };
+        renderWithRouter(<AchievementCard achievement={achievementWithoutImage} />);
+
+        // The Award icon is rendered inside a div that should be visible
+        const fallbackIcon = document.querySelector('.lucide-award');
+        expect(fallbackIcon).toBeInTheDocument();
     });
 });
 
@@ -98,5 +124,59 @@ describe('AchievementCard Highlighting', () => {
 
         // Highlight logic in code: ring-2 ring-accent-blue/30
         expect(card).toHaveClass('ring-2');
+    });
+});
+
+describe('AchievementCard Redraw', () => {
+    const mockAchievement = {
+        id: 4,
+        name: 'Artist',
+        quest_title: 'Paint a picture',
+        awarded_at: new Date().toISOString(),
+        rarity: 'gold',
+        image: 'http://example.com/old.png'
+    };
+
+    it('renders the redraw button', () => {
+        renderWithRouter(<AchievementCard achievement={mockAchievement} />);
+        expect(screen.getByTitle('Redraw achievement image')).toBeInTheDocument();
+    });
+
+    it('shows loading state during redraw', async () => {
+        api.post.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({
+            data: { image: 'http://example.com/new.png' }
+        }), 100)));
+
+        renderWithRouter(<AchievementCard achievement={mockAchievement} />);
+        const redrawButton = screen.getByTitle('Redraw achievement image');
+
+        fireEvent.click(redrawButton);
+
+        expect(redrawButton).toBeDisabled();
+
+        const icon = redrawButton.querySelector('svg');
+        expect(icon).toHaveClass('animate-spin');
+
+        const img = screen.getByAltText('Artist');
+        expect(img).toHaveClass('opacity-30');
+    });
+
+    it('updates image after successful redraw', async () => {
+        api.post.mockResolvedValue({
+            data: { image: 'http://example.com/new.png' }
+        });
+
+        renderWithRouter(<AchievementCard achievement={mockAchievement} />);
+        const redrawButton = screen.getByTitle('Redraw achievement image');
+
+        fireEvent.click(redrawButton);
+
+        const img = await screen.findByAltText('Artist');
+
+        expect(img.getAttribute('src')).toContain('http://example.com/new.png');
+
+        expect(redrawButton).not.toBeDisabled();
+        const icon = redrawButton.querySelector('svg');
+        expect(icon).not.toHaveClass('animate-spin');
     });
 });

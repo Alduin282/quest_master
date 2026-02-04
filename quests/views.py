@@ -1,3 +1,5 @@
+import logging
+import os
 from typing import Any
 from rest_framework import viewsets, status, decorators
 from rest_framework.response import Response
@@ -5,6 +7,10 @@ from django.utils import timezone
 from django.db.models.query import QuerySet
 from .models import Quest, Achievement
 from .serializers import QuestSerializer, AchievementSerializer
+import random
+from .image_generator import generate_achievement_image
+
+logger = logging.getLogger(__name__)
 
 
 class QuestViewSet(viewsets.ModelViewSet):
@@ -60,28 +66,23 @@ class QuestViewSet(viewsets.ModelViewSet):
             user=request.user, quest=quest, name=quest.planned_achievement_name, rarity=rarity
         )
 
-        # Генерируем изображение для достижения
-        from .image_generator import generate_achievement_image
-
+        image_generated = False
         try:
             image_content = generate_achievement_image(
                 quest_title=quest.title,
                 quest_description=quest.description,
                 achievement_name=quest.planned_achievement_name,
-                rarity=rarity,
             )
             if image_content:
                 # Сохраняем изображение с уникальным именем
                 filename = f"achievement_{achievement.id}_{quest.id}.png"
                 achievement.image.save(filename, image_content, save=True)
+                image_generated = True
         except Exception as e:
             # Логируем ошибку, но не прерываем создание достижения
-            import logging
-
-            logger = logging.getLogger(__name__)
             logger.error(f"Failed to generate image for achievement {achievement.id}: {e}")
 
-        return Response(QuestSerializer(quest).data)
+        return Response({"quest": QuestSerializer(quest).data, "image_generated": image_generated})
 
     @decorators.action(detail=True, methods=["post"])
     def restart(self, request: Any, pk: Any = None) -> Response:
@@ -102,3 +103,43 @@ class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self) -> QuerySet[Achievement]:
         return Achievement.objects.filter(user=self.request.user)
+
+    @decorators.action(detail=True, methods=["post"])
+    def regenerate_image(self, request: Any, pk: Any = None) -> Response:
+        achievement = self.get_object()
+        quest = achievement.quest
+
+        try:
+            new_seed = random.randint(1, 10000)
+            image_content = generate_achievement_image(
+                quest_title=quest.title,
+                quest_description=quest.description,
+                achievement_name=achievement.name,
+                seed=new_seed,
+            )
+
+            if image_content:
+                self._save_image(achievement, image_content)
+                return Response(AchievementSerializer(achievement, context={"request": request}).data)
+            else:
+                logger.error(f"REGENERATE: Image generator returned None for achievement {achievement.id}")
+                return Response({"error": "Failed to generate image"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"Error regenerating image for achievement {achievement.id}: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def _save_image(self, achievement: Achievement, image_content: bytes) -> None:
+        if achievement.image:
+            self._replace_existing_image(achievement, image_content)
+        else:
+            filename = f"achievement_{achievement.id}_{achievement.quest.id}.png"
+            achievement.image.save(filename, image_content, save=True)
+
+    def _replace_existing_image(self, achievement: Achievement, image_content: bytes) -> None:
+        full_name = achievement.image.name
+        existing_filename = os.path.basename(full_name)
+
+        if achievement.image.storage.exists(full_name):
+            achievement.image.storage.delete(full_name)
+        achievement.image.save(existing_filename, image_content, save=True)

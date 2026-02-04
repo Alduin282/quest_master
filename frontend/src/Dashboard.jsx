@@ -22,6 +22,7 @@ export const StatusBadge = ({ status }) => {
 
 export const QuestCard = ({ quest, onAction, onDelete }) => {
     const [isStarting, setIsStarting] = useState(false);
+    const [isCompleting, setIsCompleting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
 
     // Duration components
@@ -37,6 +38,21 @@ export const QuestCard = ({ quest, onAction, onDelete }) => {
         }
         onAction(quest.id, 'start', { duration_minutes: totalMinutes });
         setIsStarting(false);
+    };
+
+    const handleComplete = async () => {
+        if (isCompleting) return;
+        setIsCompleting(true);
+        try {
+            const res = await onAction(quest.id, 'complete');
+            if (res && res.data && res.data.image_generated === false) {
+                alert("Quest completed! However, we couldn't generate your achievement image right now. You can try to redraw it later in the Hall of Fame.");
+            }
+        } catch (err) {
+            // Errors are handled in Dashboard or by Status refresh
+        } finally {
+            setIsCompleting(false);
+        }
     };
 
     const isLongDescription = quest.description && quest.description.length > 120;
@@ -174,10 +190,21 @@ export const QuestCard = ({ quest, onAction, onDelete }) => {
                 )}
                 {quest.status === QUEST_STATUS.active && (
                     <button
-                        onClick={() => onAction(quest.id, 'complete')}
-                        className="btn btn-primary flex-1 justify-center gap-2 bg-accent-green hover:bg-accent-green/80 border-none cursor-pointer"
+                        onClick={handleComplete}
+                        disabled={isCompleting}
+                        className={`btn btn-primary flex-1 justify-center gap-2 bg-accent-green hover:bg-accent-green/80 border-none cursor-pointer transition-all duration-300 ${isCompleting ? 'opacity-70 pointer-events-none' : ''}`}
                     >
-                        <CheckCircle size={14} /> {QUEST_ACTIONS.complete}
+                        {isCompleting ? (
+                            <>
+                                <RefreshCcw size={14} className="animate-spin" />
+                                {QUEST_ACTIONS.completing}
+                            </>
+                        ) : (
+                            <>
+                                <CheckCircle size={14} />
+                                {QUEST_ACTIONS.complete}
+                            </>
+                        )}
                     </button>
                 )}
                 {quest.status === QUEST_STATUS.completed && (
@@ -252,12 +279,14 @@ const Dashboard = () => {
 
     const handleAction = async (id, action, data = {}) => {
         try {
-            await api.post(`quests/${id}/${action}/`, data);
+            const res = await api.post(`quests/${id}/${action}/`, data);
+            return res;
         } catch (err) {
             // Even if it failed (e.g. 400 for expired), we refresh to show updated status
             if (err.response?.data?.error) {
                 console.warn(`Action ${action} resulted in: ${err.response.data.error}`);
             }
+            throw err;
         } finally {
             fetchQuests();
         }
